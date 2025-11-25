@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <title>Lab3:Web-based Mapping Using OpenLayers </title>
+	<script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+	<link rel="stylesheet" href="https://rawgit.com/walkermatt/ol-layerswitcher/master/src/ol-layerswitcher.css"/>
+              <link rel="stylesheet" href="https://rawgit.com/walkermatt/ol-layerswitcher/master/examples/layerswitcher.css" />
+              <script src="https://rawgit.com/walkermatt/ol-layerswitcher/master/dist/ol-layerswitcher.js"></script>		
+  </head>
+  
+  <body>
+	<h3>Lab3: Web-based Mapping Using OpenLayers</h3>
+	<h4>Author: YOUR NAME HERE</h4>
+    <div id="map" class="map", style = "width:800px; height: 600px"></div>
+	
+    <script>
+           	  
+          var OSM = new ol.layer.Tile({
+	title: 'OSM',
+	type: 'base',
+	visible: true,
+	source: new ol.source.OSM()
+	});
+		
+         var bing = new ol.layer.Tile({
+	title: 'Bing Map',
+	type: 'base',
+	visible: false,
+	source: new ol.source.BingMaps({
+	      key: 'AvaGM7j2D9gs32ETYZ6JRReFZb8sdB8mXJTKUfzoNIXH_wYwBa03sDOQ54_ci_ZI',
+	      imagerySet: 'Aerial'
+	      })
+              });	
+		
+          var wms = new ol.layer.Tile({
+	title: 'States',
+	extent: [  -8887500, 3911200, -8878050, 3921000],
+	source: new ol.source.TileWMS({
+		url: 'http://18.118.247.53:8080/geoserver/wms',
+        params: {
+        'LAYERS': 'ikresak:lidar_stream',
+        'TILED': true,
+        'VERSION': '1.1.0',   // force 1.1.0 like your test URL
+        'FORMAT': 'image/png' // standard image format
+         },
+		serverType: 'geoserver',
+		transition: 0
+		})
+	});
+	  
+            var group = new ol.layer.Group({
+	    'title': 'Base maps',
+	    layers: [OSM, bing]
+	    });
+		
+            var map = new ol.Map({
+	    target: 'map',
+	    layers: [group, wms],
+	    view: new ol.View({
+		center: [-10997148, 4569099],
+		zoom: 4
+		})
+		});	
+map.getView().fit(wms.getExtent(), {
+    size: map.getSize(),
+    maxZoom: 14
+});	
+		
+          var layerSwitcher = new ol.control.LayerSwitcher({
+	 tipLabel: 'Legend' // Optional label for button
+	 });
+
+          map.addControl(layerSwitcher);
+	    	
+    </script>
+  </body>
+</html>
